@@ -131,7 +131,7 @@ body {
 }
 .modal-main-heading {
   color: var(--purple);
-  font-family: "Times New Roman", serif;
+  font-family: "Georgia", sans-serif;
   font-size: 2.2em;
   text-align: center;
   text-transform: uppercase;
@@ -482,7 +482,7 @@ body {
   padding: 5px 8px;
   background: #68459f;
   color: white;
-  font-family: Georgia, serif;
+  font-family: "Georgia", serif;
   font-size: var(--font-small);
   font-weight: bold;
 }
@@ -743,11 +743,11 @@ body {
 
 .spam-ad {
   position: fixed;
-  background: #8b0000;
+  background: #DB00AC;
   color: #fff;
-  border: 4px solid #ff0000;
+  border: 4px solid #33FF58;
   outline: 2px solid yellow;
-  font-family: "Courier New", Courier, monospace;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 22px;
   font-weight: bold;
   text-align: center;
@@ -767,7 +767,7 @@ body {
 }
 
 .grayscale-glitch-body .spam-ad {
-  box-shadow: 8px 8px 0px #fffc00 !important;
+  box-shadow: 8px 8px 0px #F7CD26 !important;
 }
 
 #look-away-btn {
@@ -779,10 +779,10 @@ body {
   font-size: 24px;
   font-family: Arial, sans-serif;
   font-weight: bold;
-  background: #fffc00 !important;
+  background: #F7CD26 !important;
   color: #000 !important;
   border: 4px solid #000 !important;
-  box-shadow: 0 0 20px #fffc00 !important;
+  box-shadow: 0 0 20px #F7CD26 !important;
   cursor: pointer;
   opacity: 0;
   z-index: 900002;
@@ -797,9 +797,9 @@ body {
 }
 #look-away-btn:hover {
   background: #000 !important;
-  color: #fffc00 !important;
+  color: #F7CD26 !important;
   animation: none;
-  box-shadow: 0 0 40px #fffc00 !important;
+  box-shadow: 0 0 40px #F7CD26 !important;
 }
 @keyframes crtFlicker {
   0% {
