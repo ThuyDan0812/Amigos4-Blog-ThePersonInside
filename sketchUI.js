@@ -1,8 +1,7 @@
 /* ==========================================================================
    sketchUI.js - p5.js GENERATIVE ART & UI CANVASES (MERGED)
    ========================================================================== */
-
-// =========================================================
+  // =========================================================
 // 0. PROMO ADVERTISEMENTS ROTATOR
 // =========================================================
 document.addEventListener("DOMContentLoaded", () => {
@@ -16,8 +15,15 @@ document.addEventListener("DOMContentLoaded", () => {
       "edited-media/COMM2754-2026-S2-A3w12-Amigos4-ad4.png",
     ];
 
+    // Initialize the two hover sounds (Update the .wav extension to .mp3 if necessary)
+    const hoverSounds = [
+      new Audio("designed-sounds/COMM2754-2026-S2-A3w12-Amigos4-blog-pop.wav"),
+      new Audio("designed-sounds/COMM2754-2026-S2-A3w12-Amigos4-blog-pop-02.wav")
+    ];
+
     const imgElement = document.createElement("img");
-    imgElement.style.transition = "transform 0.2s ease-in-out, filter 0.2s ease-in-out";
+    imgElement.style.transition =
+      "transform 0.2s ease-in-out, filter 0.2s ease-in-out";
     quangcaoDiv.appendChild(imgElement);
 
     if (!document.getElementById("promo-shake-style")) {
@@ -42,7 +48,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     quangcaoDiv.addEventListener("mouseenter", () => {
       imgElement.classList.add("promo-hover-shake");
+      
+      // Select a random sound, reset it, and play it
+      const randomSound = hoverSounds[Math.floor(Math.random() * hoverSounds.length)];
+      randomSound.currentTime = 0; 
+      randomSound.play().catch(e => console.warn("Browser blocked audio play:", e));
     });
+    
     quangcaoDiv.addEventListener("mouseleave", () => {
       imgElement.classList.remove("promo-hover-shake");
     });
@@ -65,33 +77,42 @@ document.addEventListener("DOMContentLoaded", () => {
 // AVATAR & INTERACTIVE POST SKETCHES (Original)
 // =========================================================
 const avatarSketch = (p) => {
-  let selectedImg, isHovered = false, wasHovered = false, globalHue = 0;
-  p.preload = () => { selectedImg = p.loadImage(sessionAvatarFile); };
-  
+  let selectedImg,
+    isHovered = false,
+    wasHovered = false,
+    globalHue = 0;
+  p.preload = () => {
+    selectedImg = p.loadImage(sessionAvatarFile);
+  };
+
   p.setup = () => {
     const container = document.getElementById("avatar-canvas-container");
     const w = container ? container.offsetWidth : 220;
     p.createCanvas(w, w).parent("avatar-canvas-container");
     p.colorMode(p.HSB, 360, 100, 100, 100);
   };
-  
+
   p.draw = () => {
     p.background(30, 30, 30);
-    isHovered = p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height;
-    
+    isHovered =
+      p.mouseX >= 0 &&
+      p.mouseX <= p.width &&
+      p.mouseY >= 0 &&
+      p.mouseY <= p.height;
+
     if (isHovered && !wasHovered) {
-      if (typeof activeHeartbeatSound !== 'undefined' && activeHeartbeatSound) {
+      if (typeof activeHeartbeatSound !== "undefined" && activeHeartbeatSound) {
         activeHeartbeatSound.currentTime = 0;
         activeHeartbeatSound.play().catch(() => {});
       }
     }
     wasHovered = isHovered;
-    
+
     p.push();
     p.translate(p.width / 2, p.height / 2);
     p.imageMode(p.CENTER);
     const imgSize = p.width * 0.9;
-    
+
     if (selectedImg && selectedImg.width > 0) {
       if (!isHovered) {
         p.drawingContext.filter = "grayscale(100%) brightness(130%)";
@@ -115,7 +136,7 @@ const avatarSketch = (p) => {
     }
     p.pop();
   };
-  
+
   p.windowResized = () => {
     const container = document.getElementById("avatar-canvas-container");
     if (container) p.resizeCanvas(container.offsetWidth, container.offsetWidth);
@@ -127,37 +148,64 @@ const interactiveCrashSketch = (p) => {
   const step = 10;
   const chars = ["@", "*", "?", "^", "!", "x_x", "#", "%", ">", "<"];
   
+  // Added audio variables
+  let hoverSound;
+  let wasHovering = false;
+
   p.preload = () => {
     const drugImages = [
-      "edited-media/COMM2754-2026-S2-A3w12-Amigos4-element1.png", 
-      "edited-media/COMM2754-2026-S2-A3w12-Amigos4-element2.png", 
-      "edited-media/COMM2754-2026-S2-A3w12-Amigos4-element3.png"
+      "edited-media/COMM2754-2026-S2-A3w12-Amigos4-element1.png",
+      "edited-media/COMM2754-2026-S2-A3w12-Amigos4-element2.png",
+      "edited-media/COMM2754-2026-S2-A3w12-Amigos4-element3.png",
     ];
     const randomDrug = p.random(drugImages);
     drugImg = p.loadImage(
       randomDrug,
       () => console.log("Crash sketch loaded:", randomDrug),
-      () => console.error("Crash sketch FAILED:", randomDrug)
+      () => console.error("Crash sketch FAILED:", randomDrug),
     );
   };
-  
+
   p.setup = () => {
     const container = document.getElementById("interactive-crash-canvas");
     if (!container) return;
-    p.createCanvas(container.offsetWidth, container.offsetHeight).parent(container);
+    p.createCanvas(container.offsetWidth, container.offsetHeight).parent(
+      container,
+    );
     if (drugImg && drugImg.width > 0) {
       drugImg.resize(p.width, p.height);
       drugImg.loadPixels();
     }
+    
     p.textAlign(p.CENTER, p.CENTER);
     p.textFont("Arial");
     p.noStroke();
+
+    // Initialize ping 1 sound
+    hoverSound = new Audio("designed-sounds/COMM2754-2026-S2-A3w12-Amigos4-ping.wav");
+    hoverSound.volume = 0.5;
   };
-  
+
   p.draw = () => {
     p.background(15);
     if (!drugImg || !drugImg.pixels || drugImg.pixels.length === 0) return;
-    
+
+    // Check if hovering over the whole canvas
+    const isHoveringCanvas =
+      p.mouseX > 0 &&
+      p.mouseX < p.width &&
+      p.mouseY > 0 &&
+      p.mouseY < p.height;
+
+    // Play sound once when mouse enters the canvas
+    if (isHoveringCanvas && !wasHovering) {
+      if (hoverSound) {
+        hoverSound.currentTime = 0;
+        hoverSound.play().catch((error) => console.log("Audio blocked by browser:", error));
+      }
+    }
+    wasHovering = isHoveringCanvas;
+
     for (let y = 0; y < p.height; y += step) {
       for (let x = 0; x < p.width; x += step) {
         const i = (y * drugImg.width + x) * 4;
@@ -166,11 +214,10 @@ const interactiveCrashSketch = (p) => {
         const b = drugImg.pixels[i + 2];
         const a = drugImg.pixels[i + 3];
         if (a === 0 || a === undefined) continue;
-        
+
         const d = p.dist(p.mouseX, p.mouseY, x, y);
-        const isHovering = p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height;
-        
-        if (isHovering && d < 120) {
+
+        if (isHoveringCanvas && d < 120) {
           const threshold = p.map(d, 0, 120, 1, 0);
           if (p.random() < threshold) {
             p.fill(r + 70, g + 70, b + 70);
@@ -187,7 +234,7 @@ const interactiveCrashSketch = (p) => {
       }
     }
   };
-  
+
   p.windowResized = () => {
     const container = document.getElementById("interactive-crash-canvas");
     if (container) {
@@ -199,39 +246,45 @@ const interactiveCrashSketch = (p) => {
     }
   };
 };
-
 const interactivePostSketch = (p) => {
   let faceImg, drugImg, topLayer;
-  let mouseStoppedFrames = 31; 
-  let wasHovering = false; 
+  let mouseStoppedFrames = 31;
+  let wasHovering = false;
   let hoverSounds = [];
 
   p.preload = () => {
-    const faces = ["edited-media/COMM2754-2026-S2-A3w12-Amigos4-bao.png", "edited-media/COMM2754-2026-S2-A3w12-Amigos4-nam.png", "edited-media/COMM2754-2026-S2-A3w12-Amigos4-dan.png", "edited-media/COMM2754-2026-S2-A3w12-Amigos4-hang.png"];
+    const faces = [
+      "edited-media/COMM2754-2026-S2-A3w12-Amigos4-bao.png",
+      "edited-media/COMM2754-2026-S2-A3w12-Amigos4-nam.png",
+      "edited-media/COMM2754-2026-S2-A3w12-Amigos4-dan.png",
+      "edited-media/COMM2754-2026-S2-A3w12-Amigos4-hang.png",
+    ];
     const randomFace = p.random(faces);
     faceImg = p.loadImage(randomFace);
 
     const drugs = [
-      "edited-media/COMM2754-2026-S2-A3w12-Amigos4-element1.png", 
-      "edited-media/COMM2754-2026-S2-A3w12-Amigos4-element2.png", 
-      "edited-media/COMM2754-2026-S2-A3w12-Amigos4-element3.png"
+      "edited-media/COMM2754-2026-S2-A3w12-Amigos4-element1.png",
+      "edited-media/COMM2754-2026-S2-A3w12-Amigos4-element2.png",
+      "edited-media/COMM2754-2026-S2-A3w12-Amigos4-element3.png",
     ];
     const randomDrug = p.random(drugs);
     drugImg = p.loadImage(randomDrug);
   };
-  
+
   p.setup = () => {
     const container = document.getElementById("interactive-post-canvas");
     if (!container) return;
-    p.createCanvas(container.offsetWidth, container.offsetHeight).parent(container);
+    p.createCanvas(container.offsetWidth, container.offsetHeight).parent(
+      container,
+    );
     topLayer = p.createGraphics(p.width, p.height);
     drawDrugPattern(topLayer, 255);
 
+    // Updated to use ping-02
     hoverSounds = [
-      new Audio("edited-sounds/ping.wav"), 
-      new Audio("edited-sounds/ping2.wav")
+      new Audio("designed-sounds/COMM2754-2026-S2-A3w12-Amigos4-ping-02.wav"),
     ];
-    hoverSounds.forEach(snd => snd.volume = 0.5);
+    hoverSounds.forEach((snd) => (snd.volume = 0.5));
   };
 
   p.draw = () => {
@@ -240,24 +293,27 @@ const interactivePostSketch = (p) => {
     if (faceImg && faceImg.width > 0) {
       p.image(faceImg, p.width / 2, p.height / 2, 220, 220);
     }
-    
-    const isHovering = p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height;
+
+    const isHovering =
+      p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height;
     const isMoving = p.dist(p.mouseX, p.mouseY, p.pmouseX, p.pmouseY) > 0.5;
 
     if (isHovering && !wasHovering) {
       if (hoverSounds.length > 0) {
         const snd = p.random(hoverSounds);
-        snd.currentTime = 0; 
-        snd.play().catch((error) => console.log("Audio blocked by browser:", error));
+        snd.currentTime = 0;
+        snd
+          .play()
+          .catch((error) => console.log("Audio blocked by browser:", error));
       }
     }
     wasHovering = isHovering;
 
     if (isHovering && isMoving) {
       if (mouseStoppedFrames > 30) {
-        if (typeof CorruptionOperator !== 'undefined') {
+        if (typeof CorruptionOperator !== "undefined") {
           const shouldCorrupt = CorruptionOperator.incrementAndCheck();
-          if (shouldCorrupt && typeof triggerGlobalGlitch === 'function') {
+          if (shouldCorrupt && typeof triggerGlobalGlitch === "function") {
             triggerGlobalGlitch();
           }
         }
@@ -302,7 +358,8 @@ const interactivePostSketch = (p) => {
 // =========================================================
 // 1. SCROLLING AD SKETCH (NEW VERSION)
 // =========================================================
-const cloverImageFile = "edited-media/COMM2754-2026-S2-A3w12-Amigos4-clover.gif";
+const cloverImageFile =
+  "edited-media/COMM2754-2026-S2-A3w12-Amigos4-clover.gif";
 const maxClovers = 12;
 const cloverPreloads = [];
 for (let i = 0; i < maxClovers; i++) {
@@ -341,8 +398,8 @@ const scrollingAdSketch = (p) => {
   let pendingHoverY = 0;
 
   const soundFiles = [
-    "designed-sounds/sound1.wav",
-    "designed-sounds/sound2.wav",
+    "designed-sounds/COMM2754-2026-S2-A3w12-Amigos4-banner.wav",
+    "designed-sounds/COMM2754-2026-S2-A3w12-Amigos4-banner-02.wav",
   ];
 
   function setupCloverPool() {
@@ -405,7 +462,10 @@ const scrollingAdSketch = (p) => {
     } else if (cloverPool[0]) {
       cloverPool[0].onload = setupCloverSize;
     }
-    p.textSize(24); p.textFont("Georgia"); p.textStyle(p.BOLD); p.textAlign(p.LEFT, p.CENTER);
+    p.textSize(24);
+    p.textFont("Georgia");
+    p.textStyle(p.BOLD);
+    p.textAlign(p.LEFT, p.CENTER);
     textWidthValue = p.textWidth(adText);
     textXPos = p.width;
     loadedSounds = soundFiles.map((path) => {
@@ -443,7 +503,11 @@ const scrollingAdSketch = (p) => {
   p.mousePressed = () => {
     const isMobileOrTablet = window.matchMedia("(max-width: 760px)").matches;
     if (isMobileOrTablet) {
-      const mouseInCanvas = p.mouseX > 0 && p.mouseX <= p.width && p.mouseY > 0 && p.mouseY <= p.height;
+      const mouseInCanvas =
+        p.mouseX > 0 &&
+        p.mouseX <= p.width &&
+        p.mouseY > 0 &&
+        p.mouseY <= p.height;
       if (mouseInCanvas) {
         triggerInteraction(p.mouseX, p.mouseY);
       }
@@ -452,9 +516,14 @@ const scrollingAdSketch = (p) => {
 
   function spawnCandyParticles(x, y) {
     if (!candyImagesReady) {
-      pendingCandyHover = true; pendingHoverX = x; pendingHoverY = y; return;
+      pendingCandyHover = true;
+      pendingHoverX = x;
+      pendingHoverY = y;
+      return;
     }
-    const usableImages = candyImages.filter((img) => img.complete && img.naturalWidth > 0);
+    const usableImages = candyImages.filter(
+      (img) => img.complete && img.naturalWidth > 0,
+    );
     if (usableImages.length === 0) return;
     const particleCount = p.floor(p.random(15, 30));
     for (let i = 0; i < particleCount; i++) {
@@ -469,7 +538,11 @@ const scrollingAdSketch = (p) => {
     p.noStroke();
 
     const isMobileOrTablet = window.matchMedia("(max-width: 760px)").matches;
-    const mouseInCanvas = p.mouseX > 0 && p.mouseX <= p.width && p.mouseY > 0 && p.mouseY <= p.height;
+    const mouseInCanvas =
+      p.mouseX > 0 &&
+      p.mouseX <= p.width &&
+      p.mouseY > 0 &&
+      p.mouseY <= p.height;
 
     if (!isMobileOrTablet) {
       if (mouseInCanvas && !isHovering) {
@@ -485,7 +558,8 @@ const scrollingAdSketch = (p) => {
       return !candy.isDead();
     });
 
-    const textWithCloversWidth = cloverImageWidth + iconGap + textWidthValue + iconGap + cloverImageWidth;
+    const textWithCloversWidth =
+      cloverImageWidth + iconGap + textWidthValue + iconGap + cloverImageWidth;
     const fullLength = textWithCloversWidth + gap;
 
     cloverPool.forEach((img) => {
@@ -532,7 +606,10 @@ const scrollingAdSketch = (p) => {
   p.windowResized = () => {
     const currentContainer = document.querySelector(".banner");
     if (currentContainer) {
-      p.resizeCanvas(currentContainer.clientWidth, currentContainer.clientHeight);
+      p.resizeCanvas(
+        currentContainer.clientWidth,
+        currentContainer.clientHeight,
+      );
       textWidthValue = p.textWidth(adText);
     }
   };
@@ -540,28 +617,52 @@ const scrollingAdSketch = (p) => {
 
 class CandyParticle {
   constructor(p, image, x, y) {
-    this.p = p; this.image = image; this.x = x; this.y = y;
-    this.vx = p.random(-3.5, 3.5); this.vy = p.random(-4.5, 0.5);
-    this.gravity = 0.1; this.alpha = 1.0; this.lifespan = 180;
-    this.size = p.random(12, 20); this.rotation = p.random(p.TWO_PI); this.rotationSpeed = p.random(-0.04, 0.04);
+    this.p = p;
+    this.image = image;
+    this.x = x;
+    this.y = y;
+    this.vx = p.random(-3.5, 3.5);
+    this.vy = p.random(-4.5, 0.5);
+    this.gravity = 0.1;
+    this.alpha = 1.0;
+    this.lifespan = 180;
+    this.size = p.random(12, 20);
+    this.rotation = p.random(p.TWO_PI);
+    this.rotationSpeed = p.random(-0.04, 0.04);
   }
   update() {
-    this.x += this.vx; this.vy += this.gravity; this.y += this.vy;
-    this.rotation += this.rotationSpeed; this.lifespan--;
+    this.x += this.vx;
+    this.vy += this.gravity;
+    this.y += this.vy;
+    this.rotation += this.rotationSpeed;
+    this.lifespan--;
     this.alpha = this.p.map(this.lifespan, 0, 180, 0, 1.0);
   }
   display() {
-    if (!this.image || !this.image.complete || this.image.naturalWidth === 0) return;
+    if (!this.image || !this.image.complete || this.image.naturalWidth === 0)
+      return;
     const ctx = this.p.drawingContext;
     const imgRatio = this.image.naturalWidth / this.image.naturalHeight;
-    let drawWidth = this.size; let drawHeight = this.size;
-    if (imgRatio >= 1) drawHeight = this.size / imgRatio; else drawWidth = this.size * imgRatio;
-    ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.rotation);
+    let drawWidth = this.size;
+    let drawHeight = this.size;
+    if (imgRatio >= 1) drawHeight = this.size / imgRatio;
+    else drawWidth = this.size * imgRatio;
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rotation);
     ctx.globalAlpha = Math.max(0, Math.min(1, this.alpha));
-    ctx.drawImage(this.image, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
+    ctx.drawImage(
+      this.image,
+      -drawWidth / 2,
+      -drawHeight / 2,
+      drawWidth,
+      drawHeight,
+    );
     ctx.restore();
   }
-  isDead() { return this.lifespan <= 0; }
+  isDead() {
+    return this.lifespan <= 0;
+  }
 }
 
 // =========================================================
@@ -651,14 +752,18 @@ const backgroundSketch = (p) => {
       const layers = 4;
       for (let i = layers; i > 0; i--) {
         const currentR = p.map(
-          i, 1, layers, currentRadius, currentRadius * 0.15
+          i,
+          1,
+          layers,
+          currentRadius,
+          currentRadius * 0.15,
         );
         const alphaVal = p.map(i, 1, layers, 35, 140);
         p.fill(
           p.red(activeColor),
           p.green(activeColor),
           p.blue(activeColor),
-          alphaVal
+          alphaVal,
         );
         p.ellipse(cx, cy, currentR);
       }
