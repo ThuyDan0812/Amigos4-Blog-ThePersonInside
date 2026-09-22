@@ -1,0 +1,15 @@
+Trong sketch.js, lướt xuống tầm 60 dòng nhìn //VIRUS LOGIC copy hết tới hết đoạn 
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+      window.restoreWebToNormal();
+    }
+  });
+}
+
+Trong SketchPU.js: copy full.
+
+Nhớ add  <script src="sketchPU.js"></script> trong html nếu xài file sketch riêng nhé.
+
+Trong CSS, dòng 80 có //Modal box copy hết
+dòng 700 //SEVERE VIRUS copy hết 
