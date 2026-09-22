@@ -37,12 +37,12 @@ const CorruptionOperator = {
 
 window.addEventListener("DOMContentLoaded", () => {
   const heartbeatPool = [
-    "designed-sounds/heartbeat1.wav",
-    "designed-sounds/heartbeat2.wav",
+    "designed-sounds/COMM2754-2026-S2-A3w12-Amigos4-heartbeat.wav",
+    "designed-sounds/COMM2754-2026-S2-A3w12-Amigos4-heartbeat-02.wav",
   ];
   const chimePool = [
-    "designed-sounds/message-chime.wav",
-    "designed-sounds/message-chime2.wav",
+    "designed-sounds/COMM2754-2026-S2-A3w12-Amigos4-message-chime.wav",
+    "designed-sounds/COMM2754-2026-S2-A3w12-Amigos4-message-chime-02.wav",
   ];
 
   try {
